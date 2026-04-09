@@ -75,10 +75,10 @@ impl SimpleDownloadManager {
             
             let pb = ProgressBar::new(total_segments as u64);
             pb.set_style(ProgressStyle::default_bar()
-                .template("{spinner:.green} [{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta}) {msg}")?
+                .template("[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({eta}) {msg}")?
                 .progress_chars("█▓▒░"));
             
-            pb.set_message(format!("下载 {}...", stream.id));
+            pb.set_message(format!("正在下载: {}", stream.id));
             
             let mut segment_index = 0;
             for (part_index, part) in playlist.media_parts.iter().enumerate() {

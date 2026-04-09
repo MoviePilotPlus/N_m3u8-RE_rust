@@ -21,7 +21,12 @@ fn main() {
     let option = parse_args();
     
     // 初始化日志系统
-    utils::logger::init_logger(option.log_file_path.as_deref(), &option.log_level);
+    if !option.no_log {
+        utils::logger::init_logger(option.log_file_path.as_deref(), &option.log_level);
+    } else {
+        // 关闭所有日志输出
+        log::set_max_level(log::LevelFilter::Off);
+    }
     
     // 初始化运行时
     let rt = Runtime::new().unwrap();
