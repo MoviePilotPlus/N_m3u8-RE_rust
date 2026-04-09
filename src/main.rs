@@ -17,38 +17,6 @@ mod utils;
 mod i18n;
 
 fn main() {
-    // 预处理命令行参数，将 -sv、-sa、-ss 转换为对应的长选项
-    let args: Vec<String> = std::env::args().collect();
-    let mut processed_args: Vec<String> = vec![args[0].clone()];
-    let mut i = 1;
-    while i < args.len() {
-        match args[i].as_str() {
-            "-sv" if i + 1 < args.len() => {
-                processed_args.push("--select-video".to_string());
-                processed_args.push(args[i + 1].clone());
-                i += 2;
-            }
-            "-sa" if i + 1 < args.len() => {
-                processed_args.push("--select-audio".to_string());
-                processed_args.push(args[i + 1].clone());
-                i += 2;
-            }
-            "-ss" if i + 1 < args.len() => {
-                processed_args.push("--select-subtitle".to_string());
-                processed_args.push(args[i + 1].clone());
-                i += 2;
-            }
-            _ => {
-                processed_args.push(args[i].clone());
-                i += 1;
-            }
-        }
-    }
-    
-    // 覆盖命令行参数
-    std::env::args_os().collect::<Vec<_>>();
-    std::env::set_var("RUST_BACKTRACE", "1");
-    
     // 解析命令行参数
     let option = parse_args();
     

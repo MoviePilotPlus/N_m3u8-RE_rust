@@ -5,7 +5,40 @@ use chrono::DateTime;
 use chrono::Utc;
 use url::Url;
 
+// 预处理命令行参数，支持 -sv、-sa、-ss 等缩写参数
 pub fn parse_args() -> MyOption {
+    // 获取原始命令行参数
+    let mut args: Vec<String> = std::env::args().collect();
+    let mut processed_args: Vec<String> = vec![args[0].clone()];
+    let mut i = 1;
+    
+    while i < args.len() {
+        match args[i].as_str() {
+            // 处理缩写参数
+            "-sv" if i + 1 < args.len() => {
+                processed_args.push("--select-video".to_string());
+                processed_args.push(args[i + 1].clone());
+                i += 2;
+            }
+            "-sa" if i + 1 < args.len() => {
+                processed_args.push("--select-audio".to_string());
+                processed_args.push(args[i + 1].clone());
+                i += 2;
+            }
+            "-ss" if i + 1 < args.len() => {
+                processed_args.push("--select-subtitle".to_string());
+                processed_args.push(args[i + 1].clone());
+                i += 2;
+            }
+            // 处理其他参数
+            _ => {
+                processed_args.push(args[i].clone());
+                i += 1;
+            }
+        }
+    }
+    
+    // 使用处理后的参数进行解析
     let matches = Command::new("N_m3u8DL-RE")
         .version("0.1.0")
         .about("Cross-platform DASH/HLS/MSS downloader")
@@ -435,7 +468,7 @@ pub fn parse_args() -> MyOption {
                 .help("设置注释信息")
                 .value_name("INFO")
         )
-        .get_matches();
+        .get_matches_from(processed_args);
 
     let mut option = MyOption::default();
     
