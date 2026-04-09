@@ -92,14 +92,9 @@ jobs:
         if: matrix.target == 'x86_64-unknown-linux-musl'
         run: |
           sudo apt-get update
-          sudo apt-get install -y musl-tools libssl-dev pkg-config gcc-multilib
+          sudo apt-get install -y musl-tools
 
       - name: Build
-        env:
-          OPENSSL_DIR: /usr
-          OPENSSL_STATIC: 1
-          PKG_CONFIG_ALL_STATIC: 1
-          CC_x86_64_unknown_linux_musl: x86_64-linux-musl-gcc
         run: cargo build --release --target ${{ matrix.target }}
 
       - name: Package
