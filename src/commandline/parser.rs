@@ -382,25 +382,7 @@ pub fn parse_args() -> MyOption {
                 .help("通过正则表达式选择符合要求的字幕流")
                 .value_name("OPTIONS")
         )
-        // 为了兼容原项目的参数格式，添加 -sv、-sa、-ss 参数
-        .arg(
-            Arg::new("sv")
-                .long("sv")
-                .help("通过正则表达式选择符合要求的视频流 (兼容格式)")
-                .value_name("OPTIONS")
-        )
-        .arg(
-            Arg::new("sa")
-                .long("sa")
-                .help("通过正则表达式选择符合要求的音频流 (兼容格式)")
-                .value_name("OPTIONS")
-        )
-        .arg(
-            Arg::new("ss")
-                .long("ss")
-                .help("通过正则表达式选择符合要求的字幕流 (兼容格式)")
-                .value_name("OPTIONS")
-        )
+
         .arg(
             Arg::new("drop-video")
 
