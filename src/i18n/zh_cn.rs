@@ -4,7 +4,7 @@ use lazy_static::lazy_static;
 lazy_static! {
     pub static ref TRANSLATIONS: HashMap<String, String> = {
         let mut map = HashMap::new();
-        map.insert("app_name".to_string(), "N_m3u8-RE".to_string());
+        map.insert("app_name".to_string(), "N_m3u8DL-RE".to_string());
         map.insert("version".to_string(), "版本".to_string());
         map.insert("loading_stream".to_string(), "加载媒体流...".to_string());
         map.insert("found_streams".to_string(), "找到 {} 个流:".to_string());

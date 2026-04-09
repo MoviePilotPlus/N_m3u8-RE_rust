@@ -100,7 +100,7 @@ jobs:
       - name: Package
         shell: bash
         run: |
-          BINARY_NAME="N_m3u8-RE"
+          BINARY_NAME="N_m3u8DL-RE"
           if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
             BINARY_NAME="${BINARY_NAME}.exe"
           fi

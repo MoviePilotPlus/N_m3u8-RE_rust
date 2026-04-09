@@ -10,7 +10,7 @@ Cross-platform DASH/HLS/MSS download tool, reimplemented in Rust. Supports on-de
 
 ## Features
 
-- Fully compatible with the command line parameters of the original N_m3u8-RE project
+- Fully compatible with the command line parameters of the original N_m3u8DL-RE project
 - High-performance Rust implementation
 - Supports DASH, HLS, and MSS protocols
 - On-demand and live download
@@ -31,7 +31,7 @@ cd N_m3u8-RE_rust
 cargo build --release
 ```
 
-After building, the executable is located at `target/release/N_m3u8-RE`.
+After building, the executable is located at `target/release/N_m3u8DL-RE`.
 
 ## Usage
 
@@ -39,10 +39,10 @@ Basic usage is the same as the original project:
 
 ```bash
 # Download on-demand video
-./N_m3u8-RE <input_url>
+./N_m3u8DL-RE <input_url>
 
 # View help
-./N_m3u8-RE --help
+./N_m3u8DL-RE --help
 ```
 
 ## Project Structure
@@ -66,4 +66,4 @@ N_m3u8-RE_rust/
 
 ## Acknowledgments
 
-- Original project: [nilaoda/N_m3u8-RE](https://github.com/nilaoda/N_m3u8-RE)
+- Original project: [nilaoda/N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)

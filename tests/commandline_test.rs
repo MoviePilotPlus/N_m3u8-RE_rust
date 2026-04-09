@@ -3,7 +3,7 @@ use predicates::prelude::*;
 
 #[test]
 fn test_commandline_help() {
-    let mut cmd = Command::cargo_bin("N_m3u8-RE").unwrap();
+    let mut cmd = Command::cargo_bin("N_m3u8DL-RE").unwrap();
     cmd.arg("--help")
         .assert()
         .success()
@@ -12,7 +12,7 @@ fn test_commandline_help() {
 
 #[test]
 fn test_commandline_version() {
-    let mut cmd = Command::cargo_bin("N_m3u8-RE").unwrap();
+    let mut cmd = Command::cargo_bin("N_m3u8DL-RE").unwrap();
     cmd.arg("--version")
         .assert()
         .success();
@@ -20,7 +20,7 @@ fn test_commandline_version() {
 
 #[test]
 fn test_commandline_required_input() {
-    let mut cmd = Command::cargo_bin("N_m3u8-RE").unwrap();
+    let mut cmd = Command::cargo_bin("N_m3u8DL-RE").unwrap();
     cmd.assert()
         .failure()
         .stderr(predicate::str::contains("the following required arguments were not provided: <input>"));
@@ -28,7 +28,7 @@ fn test_commandline_required_input() {
 
 #[test]
 fn test_commandline_with_input() {
-    let mut cmd = Command::cargo_bin("N_m3u8-RE").unwrap();
+    let mut cmd = Command::cargo_bin("N_m3u8DL-RE").unwrap();
     cmd.arg("https://example.com/playlist.m3u8")
         .assert()
         .failure(); // 应该失败，因为这不是一个有效的播放列表
@@ -36,7 +36,7 @@ fn test_commandline_with_input() {
 
 #[test]
 fn test_commandline_with_options() {
-    let mut cmd = Command::cargo_bin("N_m3u8-RE").unwrap();
+    let mut cmd = Command::cargo_bin("N_m3u8DL-RE").unwrap();
     cmd.arg("https://example.com/playlist.m3u8")
         .arg("--save-name")
         .arg("test")

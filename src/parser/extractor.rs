@@ -37,21 +37,29 @@ impl StreamExtractor {
     }
     
     pub async fn load_source_from_url(&mut self, url: &str) -> Result<(), Box<dyn std::error::Error>> {
-        // 构建HTTP请求头
-        let mut headers = HeaderMap::new();
-        for (key, value) in &self.headers {
-            let header_name = HeaderName::try_from(key)?;
-            let header_value = HeaderValue::try_from(value)?;
-            headers.insert(header_name, header_value);
+        let content;
+        
+        // 判断输入是本地文件还是 URL
+        if url.starts_with("http://") || url.starts_with("https://") {
+            // 构建HTTP请求头
+            let mut headers = HeaderMap::new();
+            for (key, value) in &self.headers {
+                let header_name = HeaderName::try_from(key)?;
+                let header_value = HeaderValue::try_from(value)?;
+                headers.insert(header_name, header_value);
+            }
+            
+            // 发送HTTP请求获取内容
+            let response = self.client.get(url)
+                .headers(headers)
+                .send()
+                .await?;
+            
+            content = response.text().await?;
+        } else {
+            // 读取本地文件
+            content = tokio::fs::read_to_string(url).await?;
         }
-        
-        // 发送HTTP请求获取内容
-        let response = self.client.get(url)
-            .headers(headers)
-            .send()
-            .await?;
-        
-        let content = response.text().await?;
         
         // 检测流类型
         self.detect_extractor_type(&content, url);

@@ -468,6 +468,30 @@ pub fn parse_args() -> MyOption {
                 .help("设置注释信息")
                 .value_name("INFO")
         )
+        .arg(
+            Arg::new("skip-subtitle-decrypt")
+                .long("skip-subtitle-decrypt")
+                .help("跳过字幕解密")
+                .action(ArgAction::SetTrue)
+        )
+        .arg(
+            Arg::new("skip-audio-decrypt")
+                .long("skip-audio-decrypt")
+                .help("跳声音频解密")
+                .action(ArgAction::SetTrue)
+        )
+        .arg(
+            Arg::new("force-mux-dolby")
+                .long("force-mux-dolby")
+                .help("强制混流杜比音效")
+                .action(ArgAction::SetTrue)
+        )
+        .arg(
+            Arg::new("use-shaka-packager")
+                .long("use-shaka-packager")
+                .help("使用 Shaka Packager（已过时，建议使用 decryption-engine）")
+                .action(ArgAction::SetTrue)
+        )
         .get_matches_from(processed_args);
 
     let mut option = MyOption::default();
@@ -537,7 +561,6 @@ pub fn parse_args() -> MyOption {
     option.skip_audio_decrypt = matches.get_flag("skip-audio-decrypt");
     option.force_mux_dolby = matches.get_flag("force-mux-dolby");
     option.use_shaka_packager = matches.get_flag("use-shaka-packager");
-    option.mux_after_done = matches.get_flag("mux-after-done");
     option.live_real_time_merge = matches.get_flag("live-real-time-merge");
     option.live_keep_segments = !matches.get_flag("live-keep-segments");
     option.live_perform_as_vod = matches.get_flag("live-perform-as-vod");
@@ -580,6 +603,7 @@ pub fn parse_args() -> MyOption {
     }
     if let Some(mux_after_done) = matches.get_one::<String>("mux-after-done") {
         option.mux_options = Some(mux_after_done.to_string());
+        option.mux_after_done = true;
     }
     if let Some(custom_hls_method) = matches.get_one::<String>("custom-hls-method") {
         option.custom_hls_method = Some(custom_hls_method.to_string());

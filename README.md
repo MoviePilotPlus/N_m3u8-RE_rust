@@ -10,7 +10,7 @@
 
 ## 特性
 
-- 完全兼容原 N_m3u8-RE 项目的命令行参数
+- 完全兼容原 N_m3u8DL-RE 项目的命令行参数
 - 高性能的 Rust 实现
 - 支持 DASH、HLS 和 MSS 协议
 - 点播和直播下载
@@ -31,7 +31,7 @@ cd N_m3u8-RE_rust
 cargo build --release
 ```
 
-编译完成后，可执行文件位于 `target/release/N_m3u8-RE`。
+编译完成后，可执行文件位于 `target/release/N_m3u8DL-RE`。
 
 ## 使用
 
@@ -39,10 +39,10 @@ cargo build --release
 
 ```bash
 # 下载点播视频
-./N_m3u8-RE <input_url>
+./N_m3u8DL-RE <input_url>
 
 # 查看帮助
-./N_m3u8-RE --help
+./N_m3u8DL-RE --help
 ```
 
 ## 项目结构
@@ -66,4 +66,4 @@ N_m3u8-RE_rust/
 
 ## 致谢
 
-- 原项目：[nilaoda/N_m3u8-RE](https://github.com/nilaoda/N_m3u8-RE)
+- 原项目：[nilaoda/N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)
