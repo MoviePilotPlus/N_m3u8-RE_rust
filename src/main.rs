@@ -17,8 +17,25 @@ mod utils;
 mod i18n;
 
 fn main() {
+    // 测试输出
+    println!("测试输出: 程序开始运行");
+    
     // 解析命令行参数
+    println!("测试输出: 开始解析命令行参数");
     let option = parse_args();
+    println!("测试输出: 命令行参数解析完成, no_log={}", option.no_log);
+    
+    // 初始化日志系统
+    println!("测试输出: 开始初始化日志系统");
+    if !option.no_log {
+        println!("测试输出: 初始化日志系统");
+        utils::logger::init_logger(option.log_file_path.as_deref(), &option.log_level);
+    } else {
+        // 关闭所有日志输出
+        println!("测试输出: 关闭日志输出");
+        log::set_max_level(log::LevelFilter::Off);
+    }
+    println!("测试输出: 日志系统初始化完成");
     
     // 初始化运行时
     let rt = Runtime::new().unwrap();

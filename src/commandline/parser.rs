@@ -5,8 +5,41 @@ use chrono::DateTime;
 use chrono::Utc;
 use url::Url;
 
+// 预处理命令行参数，支持 -sv、-sa、-ss 等缩写参数
 pub fn parse_args() -> MyOption {
-    let matches = Command::new("N_m3u8-RE")
+    // 获取原始命令行参数
+    let mut args: Vec<String> = std::env::args().collect();
+    let mut processed_args: Vec<String> = vec![args[0].clone()];
+    let mut i = 1;
+    
+    while i < args.len() {
+        match args[i].as_str() {
+            // 处理缩写参数
+            "-sv" if i + 1 < args.len() => {
+                processed_args.push("--select-video".to_string());
+                processed_args.push(args[i + 1].clone());
+                i += 2;
+            }
+            "-sa" if i + 1 < args.len() => {
+                processed_args.push("--select-audio".to_string());
+                processed_args.push(args[i + 1].clone());
+                i += 2;
+            }
+            "-ss" if i + 1 < args.len() => {
+                processed_args.push("--select-subtitle".to_string());
+                processed_args.push(args[i + 1].clone());
+                i += 2;
+            }
+            // 处理其他参数
+            _ => {
+                processed_args.push(args[i].clone());
+                i += 1;
+            }
+        }
+    }
+    
+    // 使用处理后的参数进行解析
+    let matches = Command::new("N_m3u8DL-RE")
         .version("0.1.0")
         .about("Cross-platform DASH/HLS/MSS downloader")
         .arg(
@@ -124,7 +157,8 @@ pub fn parse_args() -> MyOption {
             Arg::new("del-after-done")
                 .long("del-after-done")
                 .help("完成后删除临时文件")
-                .action(ArgAction::SetFalse)
+                .value_name("bool")
+                .value_parser(["True", "False"])
         )
         .arg(
             Arg::new("no-date-info")
@@ -136,7 +170,8 @@ pub fn parse_args() -> MyOption {
             Arg::new("no-log")
                 .long("no-log")
                 .help("关闭日志文件输出")
-                .action(ArgAction::SetTrue)
+                .value_name("bool")
+                .value_parser(["True", "False"])
         )
         .arg(
             Arg::new("write-meta-json")
@@ -361,25 +396,26 @@ pub fn parse_args() -> MyOption {
         )
         .arg(
             Arg::new("select-video")
-
                 .long("select-video")
+                .short('v')
                 .help("通过正则表达式选择符合要求的视频流")
                 .value_name("OPTIONS")
         )
         .arg(
             Arg::new("select-audio")
-
                 .long("select-audio")
+                .short('a')
                 .help("通过正则表达式选择符合要求的音频流")
                 .value_name("OPTIONS")
         )
         .arg(
             Arg::new("select-subtitle")
-
                 .long("select-subtitle")
+                .short('s')
                 .help("通过正则表达式选择符合要求的字幕流")
                 .value_name("OPTIONS")
         )
+
         .arg(
             Arg::new("drop-video")
 
@@ -420,7 +456,19 @@ pub fn parse_args() -> MyOption {
                 .help("允许HLS中的多个#EXT-X-MAP(实验性)")
                 .action(ArgAction::SetTrue)
         )
-        .get_matches();
+        .arg(
+            Arg::new("copyright-info")
+                .long("copyright-info")
+                .help("设置版权信息")
+                .value_name("INFO")
+        )
+        .arg(
+            Arg::new("commnet-info")
+                .long("commnet-info")
+                .help("设置注释信息")
+                .value_name("INFO")
+        )
+        .get_matches_from(processed_args);
 
     let mut option = MyOption::default();
     
@@ -467,9 +515,18 @@ pub fn parse_args() -> MyOption {
     option.check_segments_count = !matches.get_flag("check-segments-count");
     option.binary_merge = matches.get_flag("binary-merge");
     option.use_ffmpeg_concat_demuxer = matches.get_flag("use-ffmpeg-concat-demuxer");
-    option.del_after_done = !matches.get_flag("del-after-done");
+    
+    // 处理带值的布尔参数
+    if let Some(del_after_done) = matches.get_one::<String>("del-after-done") {
+        option.del_after_done = del_after_done == "True";
+    }
+    
     option.no_date_info = matches.get_flag("no-date-info");
-    option.no_log = matches.get_flag("no-log");
+    
+    if let Some(no_log) = matches.get_one::<String>("no-log") {
+        option.no_log = no_log == "True";
+    }
+    
     option.write_meta_json = !matches.get_flag("write-meta-json");
     option.append_url_params = matches.get_flag("append-url-params");
     option.concurrent_download = matches.get_flag("concurrent-download");
@@ -496,6 +553,12 @@ pub fn parse_args() -> MyOption {
     }
     if let Some(ffmpeg_binary_path) = matches.get_one::<String>("ffmpeg-binary-path") {
         option.ffmpeg_binary_path = Some(ffmpeg_binary_path.to_string());
+    }
+    if let Some(copyright_info) = matches.get_one::<String>("copyright-info") {
+        option.copyright_info = Some(copyright_info.to_string());
+    }
+    if let Some(commnet_info) = matches.get_one::<String>("commnet-info") {
+        option.commnet_info = Some(commnet_info.to_string());
     }
     if let Some(log_level) = matches.get_one::<String>("log-level") {
         option.log_level = log_level.to_string();
@@ -558,17 +621,23 @@ pub fn parse_args() -> MyOption {
     // 视频、音频、字幕过滤器
     if let Some(video_filter) = matches.get_one::<String>("select-video") {
         option.video_filter = Some(video_filter.to_string());
+    } else if let Some(video_filter) = matches.get_one::<String>("sv") {
+        option.video_filter = Some(video_filter.to_string());
     }
     if let Some(drop_video_filter) = matches.get_one::<String>("drop-video") {
         option.drop_video_filter = Some(drop_video_filter.to_string());
     }
     if let Some(audio_filter) = matches.get_one::<String>("select-audio") {
         option.audio_filter = Some(audio_filter.to_string());
+    } else if let Some(audio_filter) = matches.get_one::<String>("sa") {
+        option.audio_filter = Some(audio_filter.to_string());
     }
     if let Some(drop_audio_filter) = matches.get_one::<String>("drop-audio") {
         option.drop_audio_filter = Some(drop_audio_filter.to_string());
     }
     if let Some(subtitle_filter) = matches.get_one::<String>("select-subtitle") {
+        option.subtitle_filter = Some(subtitle_filter.to_string());
+    } else if let Some(subtitle_filter) = matches.get_one::<String>("ss") {
         option.subtitle_filter = Some(subtitle_filter.to_string());
     }
     if let Some(drop_subtitle_filter) = matches.get_one::<String>("drop-subtitle") {
